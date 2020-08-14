@@ -1,0 +1,53 @@
+//행과 열, 인형의 높이의 index 주의
+#include <string>
+#include <vector>
+#include <stack>
+
+using namespace std;
+
+//각 열에 가장 위에 있는 인형의 높이
+int height[30];
+stack <int> basket;
+
+int solution(vector<vector<int>> board, vector<int> moves) {
+    int answer = 0;
+    int n = board.size();
+    fill(height, height+n, n);
+    //각 열(i)마다 가장 높이 있는 인형의 위치(j)
+    //가장 높은 위치는 0
+    for(int i = 0 ; i<n ; i++){
+        int j = 0;
+        while(j<n){
+            if(board[j][i]!=0){
+               height[i]=j;
+                break;
+            }
+            j++;
+        }
+    }
+
+    for(int i = 0 ; i<moves.size(); i++){
+        int x = moves[i]-1;
+        int y = height[x];
+        if(y>=n)continue;
+        int item = board[y][x];
+        height[x]++;
+
+        basket.push(item);
+
+        if(basket.size()>=2){
+            int first = basket.top();
+            basket.pop();
+            int second = basket.top();
+
+            if(first==second){
+                basket.pop();
+                answer+=2;
+            }else{
+                basket.push(first);
+            }
+        }
+
+    }
+    return answer;
+}
