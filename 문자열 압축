@@ -1,0 +1,65 @@
+#include <string>
+#include <cstring>
+#include <vector>
+#define INF 10000
+#define A_SIZE 1000
+using namespace std;
+int memo[A_SIZE][A_SIZE];
+
+int getNum(int n){
+    if(n==1) return 0;
+    int ret  = 0;
+    while(n){
+        n/=10;
+        ret+=1;
+    }
+    return ret;
+}
+
+int solve(string s, int start, int n){
+    //숫자 길이
+    int &ret = memo[n][start];
+    if(ret!=-1) return ret;
+
+    if(s.size()-start <= n){
+        return ret = s.size()-start;
+    } 
+
+    //앞에서 n자리 문자열 
+    int num = 1, index = start; ret = n;
+    string prev = s.substr(start, n);
+    index += n;
+
+    //반복되는 문자열 처리 다른 문자열 나올떄까지 
+    while(s.size()-index >= n){
+        string piece = s.substr(index, n);
+        if(piece!=prev) break;
+
+        num++;
+        index+=n;
+        if((getNum(num-1) < getNum(num)) || num-1==1 )ret+=1;   
+    }
+
+    //다음 문자열이 다를 때 재귀적으로 처리
+    //index==s.size() -> x
+    if(index<s.size()){
+        int tmp = INF;
+        //i++이 아니라 i+=n
+        for(int i = index ; i<s.size(); i+=n){
+            tmp = min(tmp, i - index + solve(s, i, n));
+        }  
+        ret += tmp;
+    }
+    return ret;
+}
+
+int solution(string s) {
+    int answer = s.size();
+
+    for(int i = 1 ; i<=s.size()/2 ; i++){
+        memset(memo, -1, sizeof(memo));
+        printf("%d :%d\n", i, solve(s, 0, i));
+        answer = min(answer, solve(s, 0, i));
+    }
+    return answer;
+}
