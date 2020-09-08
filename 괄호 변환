@@ -1,0 +1,57 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <stack>
+using namespace std;
+
+bool is_right(string p){
+    stack <char> st;
+    for(int i = 0 ; i<p.size() ; i++){
+        if(p[i]=='('){
+            st.push(p[i]);
+        }else{
+            if(st.empty()) return false;
+            st.pop();
+        }
+    }
+    if(!st.empty()) return false;
+    return true;
+}
+
+string solve(string p){
+    string h;
+    if(p.size()==0) return h;
+
+    int open = 0, close = 0, i;
+    string u, v;
+    for(i = 0 ; i<p.size() ; i++){
+        if(p[i]=='(') open++;
+        if(p[i]==')') close++;
+        if(open && close && open==close){
+            u = p.substr(0, i+1);
+            v = p.substr(i+1, p.size()-u.size());
+            break;
+        }
+    }
+    if(is_right(u)){
+        if(v.size()==0) return h = u;
+        else return h = u + solve(v);
+    }    
+    h += '(';
+    if(v.size()) h += solve(v);
+    h += ')';
+    u = u.substr(1, u.size()-2);
+    for(int i = 0; i<u.size(); i++){
+        if(u[i]=='(') u[i] = ')';
+        else u[i] = '(';
+    }
+    h += u;
+    return h;
+}
+string solution(string p) {
+    string answer = "";
+    if(is_right(p)) return p;
+    answer =solve(p);
+    return answer;
+}
+
