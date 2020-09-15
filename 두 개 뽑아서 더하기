@@ -1,0 +1,29 @@
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+bool check[201];
+int add[2];
+vector<int> answer;
+
+void solve(int selected, int index, int k, vector<int> numbers){
+    if(selected==k){
+        int candidate = numbers[add[0]] + numbers[add[1]];
+        if(!check[candidate]){
+            answer.push_back(candidate);
+            check[candidate] = true;
+        }
+        return;
+    }
+    if(index>=numbers.size()) return;
+    
+    solve(selected, index+1, k, numbers);
+    add[selected] = index;
+    solve(selected+1, index+1, k, numbers);
+}
+vector<int> solution(vector<int> numbers) {
+    solve(0, 0, 2, numbers);
+    sort(answer.begin(), answer.end());
+    return answer;
+}
