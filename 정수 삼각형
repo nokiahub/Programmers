@@ -1,0 +1,46 @@
+#include <vector>
+#include <cstring>
+#define SIZE 501
+
+using namespace std;
+int cache[SIZE][SIZE], n, answer;
+int dup[SIZE][SIZE];
+
+int dp(int x, int y){
+    if(x == 0){
+        return dup[x][y];
+    }
+    
+    int &ret = cache[x][y];
+    if(ret != -1){
+        return ret;
+    }
+    
+    ret = dup[x][y];
+    if(y == 0){
+        ret += dp(x - 1, y);
+    }else if(y == x){
+        ret += dp(x - 1, y - 1);
+    }else{
+        ret += max(dp(x - 1, y), dp(x - 1, y - 1));
+    }
+    
+    return ret;
+}
+
+int solution(vector<vector<int>> triangle) {
+    n = triangle.size();
+    memset(cache, -1, sizeof(cache));
+    
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            dup[i][j] = triangle[i][j];
+        }
+    }
+    
+    for(int i = 0; i < n; i++){
+        answer = max(answer, dp(n - 1, i));
+    }
+    
+    return answer;
+}
